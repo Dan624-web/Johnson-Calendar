@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Family Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 16px;
+      overflow: hidden;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 42px;
+    }
+
+    .updated {
+      color: #94a3b8;
+      font-size: 16px;
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: 36px repeat(6, 1fr);
+      gap: 6px;
+      height: calc(100vh - 90px);
+    }
+
+    .day-name {
+      text-align: center;
+      color: #cbd5e1;
+      font-weight: bold;
+      font-size: 18px;
+      padding-top: 8px;
+    }
+
+   .day {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 4px;
+  overflow: hidden;
+}
+
+    .other-month {
+      opacity: 0.35;
+    }
+
+    .today {
+      outline: 4px solid white;
+    }
+
+   .date {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 3px;
+}
+
+    .event {
+  padding: 3px 5px;
+  margin-bottom: 3px;
+  border-radius: 5px;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+    .past {
+  opacity: 0.45;
+}
+.day.compact .event {
+  font-size: 11px;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+.day.ultra-compact .event {
+  font-size: 10px;
+  padding: 1px 3px;
+  margin-bottom: 1px;
+  line-height: 1;
+}
+
+    .dan { background: orange; color: white; }
+    .colleen { background: purple; color: white; }
+    .cece { background: yellow; color: black; }
+    .gabby { background: pink; color: black; }
+    .vincent { background: green; color: white; }
+    .grandparents { background: cyan; color: black; }
+    .shared { background: red; color: white; }
+    .rsvp {
+      background: yellow !important;
+      color: black !important;
+      border: 3px solid white;
+    }
+
+    .more {
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="monthTitle">Family Calendar</h1>
+  <div class="updated" id="updated"></div>
+</div>
+
+<div class="calendar" id="calendar"></div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyisrMDyN0AZnb9xtJpkVsh0XezohVzGgjMrAR_up5vcKtNUP7QDGdJ5uSMk6uUP4y6Mw/exec";
+
+function getClass(title) {
+  const lower = title.toLowerCase();
+  let matches = [];
+
+  if (lower.includes("dan") || lower.includes("dad")) matches.push("dan");
+  if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
+  if (lower.includes("cece") || lower.includes("cc") || lower.includes("cecelia")) matches.push("cece");
+  if (lower.includes("gabby") || lower.includes("gabrielle")) matches.push("gabby");
+  if (lower.includes("vincent")) matches.push("vincent");
+  if (lower.includes("gramee") || lower.includes("papa")) matches.push("grandparents");
+
+  matches = [...new Set(matches)];
+
+  if (lower.includes("rsvp")) return "rsvp";
+
+  if (matches.length > 1) {
+    const onlyGrandparents = matches.every(m => m === "grandparents");
+    if (!onlyGrandparents) return "shared";
+  }
+
+  return matches[0] || "";
+}
+
+function sameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() &&
+         a.getMonth() === b.getMonth() &&
+         a.getDate() === b.getDate();
+}
+
+function formatTime(dateString, allDay) {
+  if (allDay) return "";
+  return new Date(dateString).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function buildCalendar(events) {
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  document.getElementById("monthTitle").innerText =
+    today.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  const dayNames = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  dayNames.forEach(name => {
+    const div = document.createElement("div");
+    div.className = "day-name";
+    div.innerText = name;
+    calendar.appendChild(div);
+  });
+
+  const firstOfMonth = new Date(year, month, 1);
+  const startDate = new Date(firstOfMonth);
+  startDate.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+
+  for (let i = 0; i < 42; i++) {
+    const current = new Date(startDate);
+    current.setDate(startDate.getDate() + i);
+
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day";
+
+    if (current.getMonth() !== month) {
+      dayDiv.classList.add("other-month");
+    }
+const todayStart = new Date();
+todayStart.setHours(0, 0, 0, 0);
+
+if (current < todayStart) {
+  dayDiv.classList.add("past");
+}
+    if (sameDay(current, today)) {
+      dayDiv.classList.add("today");
+    }
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "date";
+    dateDiv.innerText = current.getDate();
+    dayDiv.appendChild(dateDiv);
+
+    const todaysEvents = events
+      .filter(event => sameDay(new Date(event.start), current))
+      .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+    if (todaysEvents.length >= 5) {
+  dayDiv.classList.add("compact");
+}
+
+if (todaysEvents.length >= 7) {
+  dayDiv.classList.add("ultra-compact");
+}
+
+const maxVisibleEvents = todaysEvents.length >= 7 ? 8 : 6;
+
+todaysEvents.slice(0, maxVisibleEvents).forEach(event => {
+  const eventDiv = document.createElement("div");
+  eventDiv.className = "event " + getClass(event.title);
+
+  const time = formatTime(event.start, event.allDay);
+  eventDiv.innerText = time ? time + " " + event.title : event.title;
+
+  dayDiv.appendChild(eventDiv);
+});
+
+if (todaysEvents.length > maxVisibleEvents) {
+  const moreDiv = document.createElement("div");
+  moreDiv.className = "more";
+  moreDiv.innerText = "+" + (todaysEvents.length - maxVisibleEvents) + " more";
+  dayDiv.appendChild(moreDiv);
+}
+      
+    calendar.appendChild(dayDiv);
+  }
+
+  document.getElementById("updated").innerText =
+    "Updated " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+}
+
+const rangeStart = new Date();
+rangeStart.setDate(1);
+rangeStart.setHours(0, 0, 0, 0);
+
+const rangeEnd = new Date();
+rangeEnd.setMonth(rangeEnd.getMonth() + 1);
+rangeEnd.setDate(0);
+rangeEnd.setHours(23, 59, 59, 999);
+
+fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
+  .then(res => res.json())
+  .then(data => {
+    buildCalendar(data.events || []);
+  })
+  .catch(err => {
+    document.body.innerHTML = "<h1>Error loading calendar</h1><p>" + err + "</p>";
+  });
+</script>
+
+</body>
+</html>
