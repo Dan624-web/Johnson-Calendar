@@ -251,15 +251,16 @@ if (todaysEvents.length > maxVisibleEvents) {
     "Updated " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
 }
 
-const rangeStart = new Date();
-rangeStart.setDate(1);
+// Define month range
+const today = new Date();
+
+const rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
 rangeStart.setHours(0, 0, 0, 0);
 
-const rangeEnd = new Date();
-rangeEnd.setMonth(rangeEnd.getMonth() + 1);
-rangeEnd.setDate(0);
+const rangeEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 rangeEnd.setHours(23, 59, 59, 999);
 
+// Fetch events for full month (including past)
 fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
   .then(res => res.json())
   .then(data => {
@@ -268,7 +269,11 @@ fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end
   .catch(err => {
     document.body.innerHTML = "<h1>Error loading calendar</h1><p>" + err + "</p>";
   });
-</script>
+
+// Auto refresh every 5 minutes
+setInterval(() => {
+  location.reload();
+}, 300000);</script>
 
 </body>
 </html>
