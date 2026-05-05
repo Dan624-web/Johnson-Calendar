@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Family Calendar</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      margin: 0;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+h1 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.updated {
+  color: #94a3b8;
+  font-size: 14px;
+  margin-top: 4px;
+}
+
+   .main-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 12px;
+  height: calc(100vh - 65px);
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 28px repeat(6, minmax(0, 1fr));
+  gap: 5px;
+  height: 100%;
+  min-height: 0;
+}
+
+.sidebar {
+  display: grid;
+  grid-template-rows: 220px 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+.weather-box,
+.agenda-box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.weather-title,
+.agenda-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.weather-detail {
+  color: #cbd5e1;
+  font-size: 16px;
+}
+.weather-current {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.weather-icon {
+  font-size: 48px;
+}
+
+.forecast {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.forecast-day {
+  background: #0f172a;
+  border-radius: 8px;
+  padding: 7px;
+  text-align: center;
+  font-weight: bold;
+}
+
+.forecast-icon {
+  font-size: 24px;
+}
+
+.forecast-temp {
+  font-size: 13px;
+  color: #cbd5e1;
+}
+.agenda-event {
+  padding: 7px;
+  margin-bottom: 7px;
+  border-radius: 7px;
+  font-weight: bold;
+  font-size: 14px;
+    }
+
+    .day-name {
+      text-align: center;
+      color: #cbd5e1;
+      font-weight: bold;
+      font-size: 18px;
+      padding-top: 8px;
+    }
+
+.day {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 8px;
+  padding: 4px;
+  overflow: hidden;
+  min-height: 0;
+}
+
+    .other-month {
+      opacity: 0.35;
+    }
+
+    .today {
+      outline: 4px solid white;
+    }
+.today {
+  outline: 4px solid #38bdf8;
+  background: #1e3a8a;
+}
+
+   .date {
+  font-weight: bold;
+  font-size: 16px;
+  margin-bottom: 3px;
+}
+
+    .event {
+  padding: 3px 5px;
+  margin-bottom: 3px;
+  border-radius: 6px;
+  font-weight: bold;
+  font-size: 12px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+    .past {
+  opacity: 0.45;
+}
+.day.compact .event {
+  font-size: 11px;
+  padding: 2px 4px;
+  margin-bottom: 2px;
+  line-height: 1;
+}
+
+.day.ultra-compact .event {
+  font-size: 10px;
+  padding: 1px 3px;
+  margin-bottom: 1px;
+  line-height: 1;
+}
+
+    .dan { background: orange; color: white; }
+    .colleen { background: purple; color: white; }
+    .cece { background: yellow; color: black; }
+    .gabby { background: pink; color: black; }
+    .vincent { background: green; color: white; }
+    .grandparents { background: cyan; color: black; }
+    .shared { background: red; color: white; }
+    .rsvp {
+      background: yellow !important;
+      color: black !important;
+      border: 3px solid white;
+    }
+
+    .more {
+      color: #cbd5e1;
+      font-size: 13px;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <h1 id="monthTitle">Family Calendar</h1>
+  <div class="updated" id="updated"></div>
+</div>
+<div class="main-layout">
+  <div class="calendar" id="calendar"></div>
+
+  <div class="sidebar">
+
+    <div class="weather-box">
+      <div class="weather-title">St. Charles Weather</div>
+      <div class="weather-current">
+        <div id="weatherIcon" class="weather-icon">--</div>
+        <div>
+          <div id="weatherTemp" class="weather-temp">--°</div>
+          <div id="weatherDesc" class="weather-detail">Loading...</div>
+        </div>
+      </div>
+      <div id="forecast" class="forecast"></div>
+    </div>
+
+    <div class="agenda-box">
+      <div class="agenda-title">Today</div>
+      <div id="agenda"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "https://script.google.com/macros/s/AKfycbyisrMDyN0AZnb9xtJpkVsh0XezohVzGgjMrAR_up5vcKtNUP7QDGdJ5uSMk6uUP4y6Mw/exec";
+
+function getClass(title) {
+  const lower = title.toLowerCase();
+  let matches = [];
+
+  if (lower.includes("dan") || lower.includes("dad")) matches.push("dan");
+  if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
+  if (lower.includes("cece") || lower.includes("cc") || lower.includes("cecelia")) matches.push("cece");
+  if (lower.includes("gabby") || lower.includes("gabrielle")) matches.push("gabby");
+  if (lower.includes("vincent")) matches.push("vincent");
+  if (lower.includes("gramee") || lower.includes("papa")) matches.push("grandparents");
+
+  matches = [...new Set(matches)];
+
+  if (lower.includes("rsvp")) return "rsvp";
+
+  if (matches.length > 1) {
+    const onlyGrandparents = matches.every(m => m === "grandparents");
+    if (!onlyGrandparents) return "shared";
+  }
+
+  return matches[0] || "";
+}
+
+function sameDay(a, b) {
+  return a.getFullYear() === b.getFullYear() &&
+         a.getMonth() === b.getMonth() &&
+         a.getDate() === b.getDate();
+}
+
+function formatTime(dateString, allDay) {
+  if (allDay) return "";
+  return new Date(dateString).toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit"
+  });
+}
+
+function buildCalendar(events) {
+  const calendar = document.getElementById("calendar");
+  calendar.innerHTML = "";
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+
+  document.getElementById("monthTitle").innerText =
+    today.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+  const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+  dayNames.forEach(name => {
+    const div = document.createElement("div");
+    div.className = "day-name";
+    div.innerText = name;
+    calendar.appendChild(div);
+  });
+
+  const firstOfMonth = new Date(year, month, 1);
+  const startDate = new Date(firstOfMonth);
+  startDate.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+
+  for (let i = 0; i < 42; i++) {
+    const current = new Date(startDate);
+    current.setDate(startDate.getDate() + i);
+
+    const dayDiv = document.createElement("div");
+    dayDiv.className = "day";
+
+    if (current.getMonth() !== month) dayDiv.classList.add("other-month");
+
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+
+    if (current < todayStart) dayDiv.classList.add("past");
+    if (sameDay(current, today)) dayDiv.classList.add("today");
+
+    const dateDiv = document.createElement("div");
+    dateDiv.className = "date";
+    dateDiv.innerText = current.getDate();
+    dayDiv.appendChild(dateDiv);
+
+    const todaysEvents = events
+      .filter(e => sameDay(new Date(e.start), current))
+      .sort((a,b)=> new Date(a.start)-new Date(b.start));
+
+    if (todaysEvents.length >= 5) dayDiv.classList.add("compact");
+    if (todaysEvents.length >= 7) dayDiv.classList.add("ultra-compact");
+
+    const max = todaysEvents.length >= 7 ? 8 : 6;
+
+    todaysEvents.slice(0,max).forEach(event => {
+      const div = document.createElement("div");
+      div.className = "event " + getClass(event.title);
+
+      const time = formatTime(event.start, event.allDay);
+      div.innerText = time ? time + " " + event.title : event.title;
+
+      dayDiv.appendChild(div);
+    });
+
+    if (todaysEvents.length > max) {
+      const more = document.createElement("div");
+      more.className = "more";
+      more.innerText = "+" + (todaysEvents.length - max) + " more";
+      dayDiv.appendChild(more);
+    }
+
+    calendar.appendChild(dayDiv);
+  }
+
+  document.getElementById("updated").innerText =
+    "Updated " + new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
+}
+
+function buildAgenda(events) {
+  const agenda = document.getElementById("agenda");
+  agenda.innerHTML = "";
+
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+
+  const dayAfterTomorrow = new Date(today);
+  dayAfterTomorrow.setDate(today.getDate() + 2);
+
+  const agendaEvents = events
+    .filter(e => {
+      const d = new Date(e.start);
+      return d >= today && d < dayAfterTomorrow;
+    })
+    .sort((a,b)=> new Date(a.start)-new Date(b.start));
+
+  if (!agendaEvents.length) {
+    agenda.innerHTML = "<div style='color:#cbd5e1;'>No events today or tomorrow</div>";
+    return;
+  }
+
+  let currentLabel = "";
+
+  agendaEvents.forEach(event => {
+    const eventDate = new Date(event.start);
+    const label = eventDate < tomorrow ? "Today" : "Tomorrow";
+
+    if (label !== currentLabel) {
+      const header = document.createElement("div");
+      header.style.color = "#cbd5e1";
+      header.style.fontWeight = "bold";
+      header.style.margin = "10px 0 6px";
+      header.innerText = label;
+      agenda.appendChild(header);
+      currentLabel = label;
+    }
+
+    const div = document.createElement("div");
+    div.className = "agenda-event " + getClass(event.title);
+
+    const time = formatTime(event.start, event.allDay);
+    div.innerText = time ? time + " - " + event.title : event.title;
+
+    agenda.appendChild(div);
+  });
+}
+
+function highlightNextEvent() {
+  const items = document.querySelectorAll("#agenda .agenda-event");
+  if (!items.length) return;
+
+  const now = new Date();
+
+  for (let item of items) {
+    const match = item.innerText.match(/(\d+:\d+|\d+\s?(AM|PM))/i);
+    if (!match) continue;
+
+    const parsed = Date.parse("1970/01/01 " + match[0]);
+    if (isNaN(parsed)) continue;
+
+    const eventTime = new Date();
+    eventTime.setHours(new Date(parsed).getHours());
+    eventTime.setMinutes(new Date(parsed).getMinutes());
+
+    if (eventTime >= now) {
+      item.style.border = "3px solid #38bdf8";
+      item.style.background = "#0ea5e9";
+      item.style.color = "white";
+      break;
+    }
+  }
+}
+
+function weatherEmoji(desc) {
+  desc = desc.toLowerCase();
+  if (desc.includes("snow")) return "❄️";
+  if (desc.includes("rain")) return "🌧️";
+  if (desc.includes("storm")) return "⛈️";
+  if (desc.includes("cloud")) return "☁️";
+  if (desc.includes("sun") || desc.includes("clear")) return "☀️";
+  return "🌤️";
+}
+
+function loadWeather() {
+  fetch("https://wttr.in/St%20Charles%20MN%2055972?format=j1")
+    .then(r=>r.json())
+    .then(data=>{
+      const c = data.current_condition[0];
+
+      document.getElementById("weatherIcon").innerText = weatherEmoji(c.weatherDesc[0].value);
+      document.getElementById("weatherTemp").innerText = c.temp_F + "°";
+      document.getElementById("weatherDesc").innerText = c.weatherDesc[0].value;
+
+      const forecast = document.getElementById("forecast");
+      forecast.innerHTML = "";
+
+      data.weather.slice(0,3).forEach(day=>{
+        const date = new Date(day.date);
+        const label = date.toLocaleDateString("en-US",{weekday:"short"});
+
+        const div = document.createElement("div");
+        div.className="forecast-day";
+        div.innerHTML = `
+          <div>${label}</div>
+          <div class="forecast-icon">${weatherEmoji(day.hourly[4].weatherDesc[0].value)}</div>
+          <div class="forecast-temp">${day.maxtempF}° / ${day.mintempF}°</div>
+        `;
+
+        forecast.appendChild(div);
+      });
+    });
+}
+
+const today = new Date();
+const rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
+const rangeEnd = new Date(today.getFullYear(), today.getMonth()+1, 0);
+
+fetch(API_URL + "?start=" + rangeStart.toISOString() + "&end=" + rangeEnd.toISOString())
+  .then(r=>r.json())
+  .then(data=>{
+    const events = data.events || [];
+    buildCalendar(events);
+    buildAgenda(events);
+    loadWeather();
+    highlightNextEvent();
+  });
+
+setInterval(()=>location.reload(),300000);
+</script>
+
+</body>
+</html>
