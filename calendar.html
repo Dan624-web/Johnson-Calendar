@@ -172,7 +172,23 @@
   <div class="updated" id="updated"></div>
 </div>
 
-<div class="calendar" id="calendar"></div>
+</body>
+<div class="main-layout">
+  <div class="calendar" id="calendar"></div>
+
+  <div class="sidebar">
+    <div class="weather-box">
+      <div class="weather-title">Weather</div>
+      <div class="weather-temp">--°</div>
+      <div class="weather-detail">Weather widget coming next</div>
+    </div>
+
+    <div class="agenda-box">
+      <div class="agenda-title">Today</div>
+      <div id="agenda"></div>
+    </div>
+  </div>
+</div>
 
 <script>
 const API_URL = "https://script.google.com/macros/s/AKfycbyisrMDyN0AZnb9xtJpkVsh0XezohVzGgjMrAR_up5vcKtNUP7QDGdJ5uSMk6uUP4y6Mw/exec";
@@ -350,20 +366,3 @@ setInterval(() => {
   location.reload();
 }, 300000);</script>
 
-</body>
-<div class="main-layout">
-  <div class="calendar" id="calendar"></div>
-
-  <div class="sidebar">
-    <div class="weather-box">
-      <div class="weather-title">Weather</div>
-      <div class="weather-temp">--°</div>
-      <div class="weather-detail">Weather widget coming next</div>
-    </div>
-
-    <div class="agenda-box">
-      <div class="agenda-title">Today</div>
-      <div id="agenda"></div>
-    </div>
-  </div>
-</div>
