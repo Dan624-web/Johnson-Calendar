@@ -30,12 +30,61 @@
       font-size: 16px;
     }
 
-    .calendar {
-      display: grid;
-      grid-template-columns: repeat(7, 1fr);
-      grid-template-rows: 36px repeat(6, 1fr);
-      gap: 6px;
-      height: calc(100vh - 90px);
+   .main-layout {
+  display: grid;
+  grid-template-columns: 1fr 320px;
+  gap: 12px;
+  height: calc(100vh - 90px);
+}
+
+.calendar {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-template-rows: 36px repeat(6, 1fr);
+  gap: 6px;
+  height: 100%;
+}
+
+.sidebar {
+  display: grid;
+  grid-template-rows: 220px 1fr;
+  gap: 12px;
+  height: 100%;
+}
+
+.weather-box,
+.agenda-box {
+  background: #1e293b;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 12px;
+  overflow: hidden;
+}
+
+.weather-title,
+.agenda-title {
+  font-size: 22px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.weather-temp {
+  font-size: 48px;
+  font-weight: bold;
+}
+
+.weather-detail {
+  color: #cbd5e1;
+  font-size: 16px;
+}
+
+.agenda-event {
+  padding: 7px;
+  margin-bottom: 7px;
+  border-radius: 7px;
+  font-weight: bold;
+  font-size: 14px;
+};
     }
 
     .day-name {
@@ -259,12 +308,38 @@ rangeStart.setHours(0, 0, 0, 0);
 
 const rangeEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
 rangeEnd.setHours(23, 59, 59, 999);
+function buildAgenda(events) {
+  const agenda = document.getElementById("agenda");
+  agenda.innerHTML = "";
 
+  const today = new Date();
+
+  const todaysEvents = events
+    .filter(event => sameDay(new Date(event.start), today))
+    .sort((a, b) => new Date(a.start) - new Date(b.start));
+
+  if (todaysEvents.length === 0) {
+    agenda.innerHTML = "<div style='color:#cbd5e1;'>No events today</div>";
+    return;
+  }
+
+  todaysEvents.forEach(event => {
+    const div = document.createElement("div");
+    div.className = "agenda-event " + getClass(event.title);
+
+    const time = formatTime(event.start, event.allDay);
+    div.innerText = time ? time + " - " + event.title : event.title;
+
+    agenda.appendChild(div);
+  });
+}
 // Fetch events for full month (including past)
 fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
   .then(res => res.json())
   .then(data => {
-    buildCalendar(data.events || []);
+    const events = data.events || [];
+buildCalendar(events);
+buildAgenda(events);
   })
   .catch(err => {
     document.body.innerHTML = "<h1>Error loading calendar</h1><p>" + err + "</p>";
@@ -276,4 +351,19 @@ setInterval(() => {
 }, 300000);</script>
 
 </body>
-</html>
+<div class="main-layout">
+  <div class="calendar" id="calendar"></div>
+
+  <div class="sidebar">
+    <div class="weather-box">
+      <div class="weather-title">Weather</div>
+      <div class="weather-temp">--°</div>
+      <div class="weather-detail">Weather widget coming next</div>
+    </div>
+
+    <div class="agenda-box">
+      <div class="agenda-title">Today</div>
+      <div id="agenda"></div>
+    </div>
+  </div>
+</div>
