@@ -19,8 +19,13 @@
   align-items: center;
   margin-bottom: 12px;
 }
+.clock {
+  font-size: 22px;
+  font-weight: bold;
+  text-align: right;
+}
 
-h1 {
+h1 { 
   margin: 0;
   font-size: 34px;
 }
@@ -182,7 +187,21 @@ h1 {
   margin-bottom: 1px;
   line-height: 1;
 }
+.day {
+  overflow: hidden;
+  position: relative;
+}
 
+.day-inner {
+  display: flex;
+  flex-direction: column;
+  animation: scrollDay 18s linear infinite;
+}
+
+@keyframes scrollDay {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-40%); }
+}
     .dan { background: orange; color: white; }
     .colleen { background: purple; color: white; }
     .cece { background: yellow; color: black; }
@@ -201,17 +220,35 @@ h1 {
       font-size: 13px;
       font-weight: bold;
     }
+.all-day-pinned {
+  position: relative;
+  z-index: 2;
+  background: #1e293b;
+  padding-bottom: 3px;
+}
+
+.timed-scroll-area {
+  position: relative;
+  overflow: hidden;
+  height: calc(100% - 28px);
+  z-index: 1;
+}
+.day:hover .day-inner {
+  animation-play-state: paused;
+}
   </style>
 </head>
 <body>
 
 <div class="header">
   <h1 id="monthTitle">Family Calendar</h1>
-  <div class="updated" id="updated"></div>
+  <div>
+    <div id="clock" class="clock"></div>
+    <div class="updated" id="updated"></div>
+  </div>
 </div>
 <div class="main-layout">
   <div class="calendar" id="calendar"></div>
-
   <div class="sidebar">
 
     <div class="weather-box">
@@ -317,35 +354,57 @@ function buildCalendar(events) {
     dateDiv.innerText = current.getDate();
     dayDiv.appendChild(dateDiv);
 
-    const todaysEvents = events
-      .filter(e => sameDay(new Date(e.start), current))
-      .sort((a,b)=> new Date(a.start)-new Date(b.start));
+const todaysEvents = events
+  .filter(e => eventOccursOnDay(e, current))
+  .sort((a,b)=> new Date(a.start)-new Date(b.start));
 
-    if (todaysEvents.length >= 5) dayDiv.classList.add("compact");
-    if (todaysEvents.length >= 7) dayDiv.classList.add("ultra-compact");
+const allDayEvents = todaysEvents.filter(e => e.allDay);
+const timedEvents = todaysEvents.filter(e => !e.allDay);
 
-    const max = todaysEvents.length >= 7 ? 8 : 6;
+const pinned = document.createElement("div");
+pinned.className = "all-day-pinned";
 
-    todaysEvents.slice(0,max).forEach(event => {
-      const div = document.createElement("div");
-      div.className = "event " + getClass(event.title);
+allDayEvents.forEach(event => {
+  const div = document.createElement("div");
+  div.className = "event " + getClass(event.title);
+  div.innerText = event.title;
+  pinned.appendChild(div);
+});
 
-      const time = formatTime(event.start, event.allDay);
-      div.innerText = time ? time + " " + event.title : event.title;
+dayDiv.appendChild(pinned);
 
-      dayDiv.appendChild(div);
-    });
+const scrollArea = document.createElement("div");
+scrollArea.className = "timed-scroll-area";
 
-    if (todaysEvents.length > max) {
-      const more = document.createElement("div");
-      more.className = "more";
-      more.innerText = "+" + (todaysEvents.length - max) + " more";
-      dayDiv.appendChild(more);
-    }
+const inner = document.createElement("div");
+const shouldScroll = timedEvents.length > 3;
+inner.className = shouldScroll ? "day-inner" : "";
 
-    calendar.appendChild(dayDiv);
-  }
+const eventElements = [];
 
+timedEvents.forEach(event => {
+  const div = document.createElement("div");
+  div.className = "event " + getClass(event.title);
+
+  const time = formatTime(event.start, event.allDay);
+  div.innerText = time ? time + " " + event.title : event.title;
+
+  eventElements.push(div);
+});
+
+eventElements.forEach(el => inner.appendChild(el));
+
+if (shouldScroll) {
+  eventElements.forEach(el => {
+    inner.appendChild(el.cloneNode(true));
+  });
+}
+
+scrollArea.appendChild(inner);
+dayDiv.appendChild(scrollArea);
+
+calendar.appendChild(dayDiv);
+}
   document.getElementById("updated").innerText =
     "Updated " + new Date().toLocaleTimeString([], {hour:"numeric",minute:"2-digit"});
 }
@@ -426,6 +485,18 @@ function highlightNextEvent() {
     }
   }
 }
+function eventOccursOnDay(event, day) {
+  const dayStart = new Date(day);
+  dayStart.setHours(0,0,0,0);
+
+  const dayEnd = new Date(day);
+  dayEnd.setHours(23,59,59,999);
+
+  const eventStart = new Date(event.start);
+  const eventEnd = new Date(event.end);
+
+  return eventStart <= dayEnd && eventEnd >= dayStart;
+}
 
 function weatherEmoji(desc) {
   desc = desc.toLowerCase();
@@ -466,6 +537,24 @@ function loadWeather() {
       });
     });
 }
+function updateClock() {
+  const now = new Date();
+
+  document.getElementById("clock").innerText =
+    now.toLocaleDateString("en-US", {
+      weekday: "short",
+      month: "short",
+      day: "numeric"
+    }) +
+    " • " +
+    now.toLocaleTimeString("en-US", {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+}
+
+updateClock();
+setInterval(updateClock, 60000);
 
 const today = new Date();
 const rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
