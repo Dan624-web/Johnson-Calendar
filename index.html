@@ -683,8 +683,9 @@ if (birthdayEvent) {
           const birthday = document.createElement("div");
           birthday.className = "holiday-badge birthday-badge";
           birthday.innerHTML =
+birthday.innerHTML =
   "🎂 " +
-  birthdayEvent.title.replace(/birthday/i, "Birthday") +
+  birthdayEvent.title.replace(/birthday/ig, "").trim() +
   " 🎂";
           dateRow.appendChild(birthday);
         }
