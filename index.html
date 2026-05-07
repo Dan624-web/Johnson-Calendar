@@ -652,9 +652,7 @@
 
         if (current < todayStart) dayDiv.classList.add("past");
         if (sameDay(current, today)) dayDiv.classList.add("today");
-if (birthdayEvent) {
-  dayDiv.classList.add("birthday-day");
-}
+
         const todaysEvents = events
           .filter(e => eventOccursOnDay(e, current))
           .sort((a,b)=> new Date(a.start)-new Date(b.start));
@@ -663,7 +661,9 @@ if (birthdayEvent) {
         const birthdayEvent = todaysEvents.find(e =>
           (e.title || "").toLowerCase().includes("birthday")
         );
-
+if (birthdayEvent) {
+  dayDiv.classList.add("birthday-day");
+}
         const dateRow = document.createElement("div");
         dateRow.className = "date-row";
 
@@ -682,8 +682,7 @@ if (birthdayEvent) {
         if (birthdayEvent) {
           const birthday = document.createElement("div");
           birthday.className = "holiday-badge birthday-badge";
-          birthday.innerHTML =
-birthday.innerHTML =
+       birthday.innerHTML =
   "🎂 " +
   birthdayEvent.title.replace(/birthday/ig, "").trim() +
   " 🎂";
