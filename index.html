@@ -129,6 +129,18 @@
       text-overflow: ellipsis;
     }
 
+    .birthday-badge {
+      color: #facc15;
+      font-weight: bold;
+      animation: birthdayGlow 2s infinite;
+    }
+
+    @keyframes birthdayGlow {
+      0% { opacity: 0.75; }
+      50% { opacity: 1; text-shadow: 0 0 8px white; }
+      100% { opacity: 0.75; }
+    }
+
     .event,
     .agenda-event {
       padding: 3px 5px;
@@ -149,8 +161,8 @@
     }
 
     .scroll-title span {
-      animation: scrollText 22s linear infinite;
-      padding-left: 100%;
+      animation: scrollText 30s linear infinite;
+      padding-left: 40%;
     }
 
     @keyframes scrollText {
@@ -497,6 +509,10 @@
       const eventStart = new Date(event.start);
       const eventEnd = new Date(event.end);
 
+      if (event.allDay) {
+        eventEnd.setMilliseconds(eventEnd.getMilliseconds() - 1);
+      }
+
       return eventStart <= dayEnd && eventEnd >= dayStart;
     }
 
@@ -517,9 +533,13 @@
 
       div.innerHTML = "<span>" + text + "</span>";
 
-      if (text.length > 32) {
-        div.classList.add("scroll-title");
-      }
+      setTimeout(() => {
+        const span = div.querySelector("span");
+
+        if (span && span.scrollWidth > div.clientWidth) {
+          div.classList.add("scroll-title");
+        }
+      }, 0);
 
       return div;
     }
@@ -567,6 +587,9 @@
           .sort((a,b)=> new Date(a.start)-new Date(b.start));
 
         const holidayEvent = todaysEvents.find(e => e.isHoliday);
+        const birthdayEvent = todaysEvents.find(e =>
+          (e.title || "").toLowerCase().includes("birthday")
+        );
 
         const dateRow = document.createElement("div");
         dateRow.className = "date-row";
@@ -583,9 +606,20 @@
           dateRow.appendChild(holiday);
         }
 
+        if (birthdayEvent) {
+          const birthday = document.createElement("div");
+          birthday.className = "holiday-badge birthday-badge";
+          birthday.innerText = "🎂 " + birthdayEvent.title.replace(/birthday/i, "Birthday");
+          dateRow.appendChild(birthday);
+        }
+
         dayDiv.appendChild(dateRow);
 
-        const visibleEvents = todaysEvents.filter(e => !e.isHoliday);
+        const visibleEvents = todaysEvents.filter(e =>
+          !e.isHoliday &&
+          !(e.title || "").toLowerCase().includes("birthday")
+        );
+
         const allDayEvents = visibleEvents.filter(e => e.allDay);
         const timedEvents = visibleEvents.filter(e => !e.allDay);
 
