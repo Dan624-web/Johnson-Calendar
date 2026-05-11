@@ -571,20 +571,53 @@
       };
     }
 
-    function getBuiltInHolidays(year) {
-      return [
-        makeHoliday("New Year's Day", new Date(year, 0, 1)),
-        makeHoliday("Valentine's Day", new Date(year, 1, 14)),
-        makeHoliday("Mother's Day", nthWeekdayOfMonth(year, 4, 0, 2)),
-        makeHoliday("Memorial Day", lastWeekdayOfMonth(year, 4, 1)),
-        makeHoliday("Father's Day", nthWeekdayOfMonth(year, 5, 0, 3)),
-        makeHoliday("Independence Day", new Date(year, 6, 4)),
-        makeHoliday("Labor Day", nthWeekdayOfMonth(year, 8, 1, 1)),
-        makeHoliday("Halloween", new Date(year, 9, 31)),
-        makeHoliday("Thanksgiving", nthWeekdayOfMonth(year, 10, 4, 4)),
-        makeHoliday("Christmas", new Date(year, 11, 25))
-      ];
-    }
+function getBuiltInHolidays(year) {
+  return [
+    makeHoliday("New Year's Day", new Date(year, 0, 1)),
+
+    makeHoliday("Valentine's Day", new Date(year, 1, 14)),
+
+    makeHoliday(
+      "Mother's Day",
+      nthWeekdayOfMonth(year, 4, 0, 2)
+    ),
+
+    makeHoliday(
+      "Memorial Day",
+      lastWeekdayOfMonth(year, 4, 1)
+    ),
+
+    makeHoliday(
+      "Father's Day",
+      nthWeekdayOfMonth(year, 5, 0, 3)
+    ),
+
+    makeHoliday(
+      "Independence Day",
+      new Date(year, 6, 4)
+    ),
+
+    makeHoliday(
+      "Labor Day",
+      nthWeekdayOfMonth(year, 8, 1, 1)
+    ),
+
+    makeHoliday(
+      "Halloween",
+      new Date(year, 9, 31)
+    ),
+
+    makeHoliday(
+      "Thanksgiving",
+      nthWeekdayOfMonth(year, 10, 4, 4)
+    ),
+
+    makeHoliday(
+      "Christmas",
+      new Date(year, 11, 25)
+    )
+  ];
+}
 
     function sameDay(a, b) {
       return a.getFullYear() === b.getFullYear() &&
