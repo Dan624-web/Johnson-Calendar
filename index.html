@@ -11,7 +11,6 @@
       --panel-dark: #0f172a;
       --border: #334155;
       --text-muted: #cbd5e1;
-
       --dan: #f97316;
       --colleen: #a855f7;
       --cece: #fde047;
@@ -129,87 +128,46 @@
       text-overflow: ellipsis;
     }
 
-.birthday-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
+    .birthday-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #fff8dc;
+      font-weight: bold;
+      font-size: 15px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f59e0b, #ec4899);
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 10px rgba(255,255,255,0.25), 0 0 18px rgba(236,72,153,0.35);
+      animation: birthdayGlow 2.5s infinite;
+    }
 
-  color: #fff8dc;
-  font-weight: bold;
-  font-size: 15px;
+    .birthday-day {
+      border: 2px solid #f59e0b !important;
+      box-shadow: 0 0 14px rgba(245,158,11,0.35);
+    }
 
-  padding: 2px 10px;
-  border-radius: 999px;
-
-  background: linear-gradient(90deg, #f59e0b, #ec4899);
-  border: 1px solid rgba(255,255,255,0.5);
-
-  box-shadow:
-    0 0 10px rgba(255,255,255,0.25),
-    0 0 18px rgba(236,72,153,0.35);
-
-  animation: birthdayGlow 2.5s infinite;
-}
-
-.birthday-day {
-  border: 2px solid #f59e0b !important;
-  box-shadow: 0 0 14px rgba(245,158,11,0.35);
-}
-
-.birthday-day::after {
-  content: "✨";
-  position: absolute;
-  top: 6px;
-  right: 6px;
-  font-size: 16px;
-  animation: confettiFloat 3s infinite ease-in-out;
-  pointer-events: none;
-}
-
-@keyframes birthdayGlow {
-  0% {
-    transform: scale(1);
-    box-shadow:
-      0 0 10px rgba(255,255,255,0.2),
-      0 0 16px rgba(236,72,153,0.3);
-  }
-
-  50% {
-    transform: scale(1.03);
-    box-shadow:
-      0 0 18px rgba(255,255,255,0.5),
-      0 0 28px rgba(236,72,153,0.55);
-  }
-
-  100% {
-    transform: scale(1);
-    box-shadow:
-      0 0 10px rgba(255,255,255,0.2),
-      0 0 16px rgba(236,72,153,0.3);
-  }
-}
-
-@keyframes confettiFloat {
-  0% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-
-  50% {
-    transform: translateY(-5px) rotate(12deg);
-    opacity: 1;
-  }
-
-  100% {
-    transform: translateY(0px) rotate(0deg);
-    opacity: 0.7;
-  }
-}
+    .birthday-day::after {
+      content: "✨";
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 16px;
+      animation: confettiFloat 3s infinite ease-in-out;
+      pointer-events: none;
+    }
 
     @keyframes birthdayGlow {
-      0% { opacity: 0.75; }
-      50% { opacity: 1; text-shadow: 0 0 8px white; }
-      100% { opacity: 0.75; }
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); text-shadow: 0 0 8px white; }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes confettiFloat {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+      50% { transform: translateY(-5px) rotate(12deg); opacity: 1; }
+      100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
     }
 
     .event,
@@ -222,7 +180,7 @@
       line-height: 1.1;
       white-space: nowrap;
       overflow: hidden;
-      color: white;
+      color: black;
     }
 
     .event span,
@@ -241,40 +199,13 @@
       100% { transform: translateX(-100%); }
     }
 
-.dan {
-  background: var(--dan);
-  color: black;
-}
-
-.colleen {
-  background: var(--colleen);
-  color: black;
-}
-
-.cece {
-  background: var(--cece);
-  color: black;
-}
-
-.gabby {
-  background: var(--gabby);
-  color: black;
-}
-
-.vincent {
-  background: var(--vincent);
-  color: black;
-}
-
-.grandparents {
-  background: var(--grandparents);
-  color: black;
-}
-
-.shared {
-  background: var(--shared);
-  color: black;
-}
+    .dan { background: var(--dan); color: black; }
+    .colleen { background: var(--colleen); color: black; }
+    .cece { background: var(--cece); color: black; }
+    .gabby { background: var(--gabby); color: black; }
+    .vincent { background: var(--vincent); color: black; }
+    .grandparents { background: var(--grandparents); color: black; }
+    .shared { background: var(--shared); color: black; }
 
     .rsvp {
       background: var(--rsvp) !important;
@@ -282,22 +213,9 @@
       border: 2px solid white;
     }
 
-    .birthday {
-      background: linear-gradient(90deg, #facc15, #fb7185);
-      color: black !important;
-      border: 2px solid white;
-      animation: birthdayPulse 2s infinite;
-    }
-
-    @keyframes birthdayPulse {
-      0% { box-shadow: 0 0 0px rgba(255,255,255,0.5); }
-      50% { box-shadow: 0 0 12px rgba(255,255,255,1); }
-      100% { box-shadow: 0 0 0px rgba(255,255,255,0.5); }
-    }
-
     .holiday-christmas {
       background: linear-gradient(45deg, #16a34a, #dc2626);
-      color: white;
+      color: #fff8dc;
     }
 
     .holiday-halloween {
@@ -310,14 +228,23 @@
       color: #facc15;
     }
 
-    .holiday-valentine {
+    .holiday-valentine,
+    .holiday-mothers,
+    .holiday-fathers {
       background: #fb7185;
-      color: white;
+      color: black;
+    }
+
+    .holiday-memorial,
+    .holiday-independence,
+    .holiday-labor {
+      background: linear-gradient(45deg, #ef4444, #f8fafc, #2563eb);
+      color: black;
     }
 
     .holiday-newyear {
       background: linear-gradient(45deg, #0ea5e9, #a855f7);
-      color: white;
+      color: #fff8dc;
     }
 
     .holiday-default {
@@ -440,9 +367,7 @@
     }
 
     @media (max-width: 800px) {
-      body {
-        overflow: auto;
-      }
+      body { overflow: auto; }
 
       .header {
         height: auto;
@@ -450,9 +375,7 @@
         gap: 4px;
       }
 
-      h1 {
-        font-size: 28px;
-      }
+      h1 { font-size: 28px; }
 
       .top-right {
         position: static;
@@ -470,13 +393,8 @@
         gap: 4px;
       }
 
-      .day-name {
-        font-size: 11px;
-      }
-
-      .date {
-        font-size: 13px;
-      }
+      .day-name { font-size: 11px; }
+      .date { font-size: 13px; }
 
       .event {
         font-size: 10px;
@@ -541,6 +459,11 @@
         if (lower.includes("halloween")) return "holiday-halloween";
         if (lower.includes("thanksgiving")) return "holiday-thanksgiving";
         if (lower.includes("valentine")) return "holiday-valentine";
+        if (lower.includes("mother")) return "holiday-mothers";
+        if (lower.includes("father")) return "holiday-fathers";
+        if (lower.includes("memorial")) return "holiday-memorial";
+        if (lower.includes("independence")) return "holiday-independence";
+        if (lower.includes("labor")) return "holiday-labor";
         if (lower.includes("new year")) return "holiday-newyear";
         return "holiday-default";
       }
@@ -551,7 +474,13 @@
 
       if (lower.includes("dan") || lower.includes("dad")) matches.push("dan");
       if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
-      if (lower.includes("cece") || lower.includes("cc") || lower.includes("cecelia")) matches.push("cece");
+
+      if (
+        lower.includes("cece") ||
+        lower.includes("cecelia") ||
+        /\bcc\b/.test(lower)
+      ) matches.push("cece");
+
       if (lower.includes("gabby") || lower.includes("gabrielle")) matches.push("gabby");
       if (lower.includes("vincent")) matches.push("vincent");
       if (lower.includes("gramee") || lower.includes("papa")) matches.push("grandparents");
@@ -570,11 +499,17 @@
       const lower = (title || "").toLowerCase();
 
       if (lower.includes("birthday")) return "🎂 ";
+
       if (event && event.isHoliday) {
         if (lower.includes("christmas")) return "🎄 ";
         if (lower.includes("halloween")) return "🎃 ";
         if (lower.includes("thanksgiving")) return "🦃 ";
         if (lower.includes("valentine")) return "💘 ";
+        if (lower.includes("mother")) return "🌷 ";
+        if (lower.includes("father")) return "👔 ";
+        if (lower.includes("memorial")) return "🇺🇸 ";
+        if (lower.includes("independence")) return "🎆 ";
+        if (lower.includes("labor")) return "🛠️ ";
         if (lower.includes("new year")) return "🎆 ";
         return "✨ ";
       }
@@ -589,6 +524,61 @@
       if (lower.includes("rsvp")) return "⚠️ ";
 
       return "";
+    }
+
+    function nthWeekdayOfMonth(year, month, weekday, n) {
+      const d = new Date(year, month, 1);
+      let count = 0;
+
+      while (d.getMonth() === month) {
+        if (d.getDay() === weekday) {
+          count++;
+          if (count === n) return new Date(d);
+        }
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    function lastWeekdayOfMonth(year, month, weekday) {
+      const d = new Date(year, month + 1, 0);
+
+      while (d.getDay() !== weekday) {
+        d.setDate(d.getDate() - 1);
+      }
+
+      return d;
+    }
+
+    function makeHoliday(title, date) {
+      const start = new Date(date);
+      start.setHours(0,0,0,0);
+
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+
+      return {
+        title: title,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        allDay: true,
+        isHoliday: true,
+        calendarId: "built-in-holidays"
+      };
+    }
+
+    function getBuiltInHolidays(year) {
+      return [
+        makeHoliday("New Year's Day", new Date(year, 0, 1)),
+        makeHoliday("Valentine's Day", new Date(year, 1, 14)),
+        makeHoliday("Mother's Day", nthWeekdayOfMonth(year, 4, 0, 2)),
+        makeHoliday("Memorial Day", lastWeekdayOfMonth(year, 4, 1)),
+        makeHoliday("Father's Day", nthWeekdayOfMonth(year, 5, 0, 3)),
+        makeHoliday("Independence Day", new Date(year, 6, 4)),
+        makeHoliday("Labor Day", nthWeekdayOfMonth(year, 8, 1, 1)),
+        makeHoliday("Halloween", new Date(year, 9, 31)),
+        makeHoliday("Thanksgiving", nthWeekdayOfMonth(year, 10, 4, 4)),
+        makeHoliday("Christmas", new Date(year, 11, 25))
+      ];
     }
 
     function sameDay(a, b) {
@@ -688,9 +678,11 @@
         const birthdayEvent = todaysEvents.find(e =>
           (e.title || "").toLowerCase().includes("birthday")
         );
-if (birthdayEvent) {
-  dayDiv.classList.add("birthday-day");
-}
+
+        if (birthdayEvent) {
+          dayDiv.classList.add("birthday-day");
+        }
+
         const dateRow = document.createElement("div");
         dateRow.className = "date-row";
 
@@ -709,10 +701,10 @@ if (birthdayEvent) {
         if (birthdayEvent) {
           const birthday = document.createElement("div");
           birthday.className = "holiday-badge birthday-badge";
-       birthday.innerHTML =
-  "🎂 " +
-  birthdayEvent.title.replace(/birthday/ig, "").trim() +
-  " 🎂";
+          birthday.innerHTML =
+            "🎂 " +
+            birthdayEvent.title.replace(/birthday/ig, "").trim() +
+            " 🎂";
           dateRow.appendChild(birthday);
         }
 
@@ -899,7 +891,10 @@ if (birthdayEvent) {
       fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
         .then(r=>r.json())
         .then(data=>{
-          const events = data.events || [];
+          const googleEvents = data.events || [];
+          const holidayEvents = getBuiltInHolidays(today.getFullYear());
+          const events = googleEvents.concat(holidayEvents);
+
           buildCalendar(events);
           buildAgenda(events);
           highlightNextEvent();
