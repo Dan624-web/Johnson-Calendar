@@ -921,10 +921,15 @@ function getBuiltInHolidays(year) {
 
     function loadCalendar() {
       const today = new Date();
-      const rangeStart = new Date(today.getFullYear(), today.getMonth(), 1);
-      const rangeEnd = new Date(today.getFullYear(), today.getMonth() + 1, 0);
-      rangeStart.setHours(0,0,0,0);
-      rangeEnd.setHours(23,59,59,999);
+     const firstDayOfMonth = new Date(year, month, 1);
+const lastDayOfMonth = new Date(year, month + 1, 0);
+
+const rangeStart = new Date(firstDayOfMonth);
+rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay());
+
+const rangeEnd = new Date(lastDayOfMonth);
+rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay()));
+rangeEnd.setHours(23, 59, 59, 999);
 
       fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
         .then(r=>r.json())
