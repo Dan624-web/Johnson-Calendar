@@ -919,29 +919,42 @@ function getBuiltInHolidays(year) {
         });
     }
 
-    function loadCalendar() {
-      const today = new Date();
-     const firstDayOfMonth = new Date(year, month, 1);
-const lastDayOfMonth = new Date(year, month + 1, 0);
+function loadCalendar() {
 
-const rangeStart = new Date(firstDayOfMonth);
-rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay());
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
 
-const rangeEnd = new Date(lastDayOfMonth);
-rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay()));
-rangeEnd.setHours(23, 59, 59, 999);
+  const firstDayOfMonth = new Date(year, month, 1);
+  const lastDayOfMonth = new Date(year, month + 1, 0);
 
-      fetch(API_URL + "?start=" + encodeURIComponent(rangeStart.toISOString()) + "&end=" + encodeURIComponent(rangeEnd.toISOString()))
-        .then(r=>r.json())
-        .then(data=>{
-          const googleEvents = data.events || [];
-          const holidayEvents = getBuiltInHolidays(today.getFullYear());
-          const events = googleEvents.concat(holidayEvents);
+  const rangeStart = new Date(firstDayOfMonth);
+  rangeStart.setDate(rangeStart.getDate() - rangeStart.getDay());
+  rangeStart.setHours(0,0,0,0);
 
-          buildCalendar(events);
-          buildAgenda(events);
-          highlightNextEvent();
-        });
+  const rangeEnd = new Date(lastDayOfMonth);
+  rangeEnd.setDate(rangeEnd.getDate() + (6 - rangeEnd.getDay()));
+  rangeEnd.setHours(23,59,59,999);
+
+  fetch(
+    API_URL +
+    "?start=" + encodeURIComponent(rangeStart.toISOString()) +
+    "&end=" + encodeURIComponent(rangeEnd.toISOString())
+  )
+    .then(r => r.json())
+    .then(data => {
+
+      const googleEvents = data.events || [];
+      const holidayEvents = getBuiltInHolidays(today.getFullYear());
+
+      const events = googleEvents.concat(holidayEvents);
+
+      buildCalendar(events);
+      buildAgenda(events);
+      highlightNextEvent();
+
+    });
+}
     }
 
     updateClock();
