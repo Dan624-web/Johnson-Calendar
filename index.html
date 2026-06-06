@@ -194,10 +194,10 @@
       white-space: nowrap;
     }
 
-    .scroll-title span {
-      animation: scrollText 30s linear infinite;
-      padding-left: 40%;
-    }
+  .scroll-title span {
+  animation: scrollText 60s linear infinite;
+  padding-left: 20%;
+}
 
     @keyframes scrollText {
       0% { transform: translateX(0); }
@@ -743,14 +743,26 @@ const text = eventIcon(displayTitle, event) + (time ? time + " " + displayTitle 
         }
 
         if (birthdayEvent) {
-          const birthday = document.createElement("div");
-          birthday.className = "holiday-badge birthday-badge";
-          birthday.innerHTML =
-            "🎂 " +
-            birthdayEvent.title.replace(/birthday/ig, "").trim() +
-            " 🎂";
-          dateRow.appendChild(birthday);
-        }
+  const birthday = document.createElement("div");
+  birthday.className = "holiday-badge birthday-badge";
+
+  const birthdayText =
+    "🎂 " +
+    birthdayEvent.title.replace(/birthday/ig, "").trim() +
+    " 🎂";
+
+  birthday.innerHTML = "<span>" + birthdayText + "</span>";
+
+  dateRow.appendChild(birthday);
+
+  setTimeout(() => {
+    const span = birthday.querySelector("span");
+
+    if (span && span.scrollWidth > birthday.clientWidth) {
+      birthday.classList.add("scroll-title");
+    }
+  }, 0);
+}
 
         dayDiv.appendChild(dateRow);
 
