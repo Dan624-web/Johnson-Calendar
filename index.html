@@ -456,7 +456,7 @@
 
     function getClass(title, event) {
       const lower = (title || "").toLowerCase();
-
+if (lower.trim() === "shift") return "cece";
       if (lower.includes("birthday")) return "birthday";
 
       if (event && event.isHoliday) {
@@ -477,7 +477,7 @@
 
       let matches = [];
 
-      if (lower.includes("dan") || lower.includes("dad")) matches.push("dan");
+      if (/\bdan\b/.test(lower) || /\bdad\b/.test(lower)) matches.push("dan");
       if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
 
       if (
@@ -654,8 +654,14 @@ function getBuiltInHolidays(year) {
       const div = document.createElement("div");
       div.className = className + " " + getClass(event.title, event);
 
-      const time = formatTime(event.start, event.allDay);
-      const text = eventIcon(event.title, event) + (time ? time + " " + event.title : event.title);
+let displayTitle = event.title || "";
+
+if (displayTitle.trim().toLowerCase() === "shift") {
+  displayTitle = "Cece Shift";
+}
+
+const time = formatTime(event.start, event.allDay);
+const text = eventIcon(displayTitle, event) + (time ? time + " " + displayTitle : displayTitle);
 
       div.innerHTML = "<span>" + text + "</span>";
 
@@ -886,7 +892,15 @@ function getBuiltInHolidays(year) {
           const forecast = document.getElementById("forecast");
           forecast.innerHTML = "";
 
-          data.weather.slice(0,3).forEach(day=>{
+          data.weather
+  .filter(day => {
+    const d = new Date(day.date + "T00:00:00");
+    const today = new Date();
+    today.setHours(0,0,0,0);
+    return d >= today;
+  })
+  .slice(0,3)
+  .forEach(day=>{
             const date = new Date(day.date);
             const label = date.toLocaleDateString("en-US", { weekday:"short" });
 
@@ -961,7 +975,10 @@ function loadCalendar() {
     loadCalendar();
 
     setInterval(updateClock, 60000);
-    setInterval(()=>location.reload(), 300000);
+  setInterval(() => {
+  loadCalendar();
+  loadWeather();
+}, 300000);
   </script>
 </body>
 </html>
