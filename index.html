@@ -456,7 +456,7 @@
 
     function getClass(title, event) {
       const lower = (title || "").toLowerCase();
-if (lower.trim() === "shift") return "cece";
+if (lower.includes("shift")) return "cece";
       if (lower.includes("birthday")) return "birthday";
 
       if (event && event.isHoliday) {
@@ -901,7 +901,7 @@ const text = eventIcon(displayTitle, event) + (time ? time + " " + displayTitle 
   })
   .slice(0,3)
   .forEach(day=>{
-            const date = new Date(day.date);
+            const date = new Date(day.date + "T00:00:00");
             const label = date.toLocaleDateString("en-US", { weekday:"short" });
 
             const div = document.createElement("div");
