@@ -14,8 +14,8 @@
       --dan: #f97316;
       --colleen: #6b21a8;
       --cece: #c084fc;
-      --gabby: #f472b6;
-      --vincent: #22c55e;
+      --gabby: #db2777;
+      --vincent: #2f4fff;
       --grandparents: #22d3ee;
       --shared: #14b8a6;
       --wow: #84cc16;
@@ -451,52 +451,58 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbyisrMDyN0AZnb9xtJpkVsh0XezohVzGgjMrAR_up5vcKtNUP7QDGdJ5uSMk6uUP4y6Mw/exec";
 
-    function getClass(title, event) {
-      const lower = (title || "").toLowerCase();
-if (lower.includes("shift")) return "cece";
-      if (lower.includes("birthday")) return "birthday";
+   function getClass(title, event) {
+  const lower = (title || "").toLowerCase();
 
-      if (event && event.isHoliday) {
-        if (lower.includes("christmas")) return "holiday-christmas";
-        if (lower.includes("halloween")) return "holiday-halloween";
-        if (lower.includes("thanksgiving")) return "holiday-thanksgiving";
-        if (lower.includes("valentine")) return "holiday-valentine";
-        if (lower.includes("mother")) return "holiday-mothers";
-        if (lower.includes("father")) return "holiday-fathers";
-        if (lower.includes("memorial")) return "holiday-memorial";
-        if (lower.includes("independence")) return "holiday-independence";
-        if (lower.includes("labor")) return "holiday-labor";
-        if (lower.includes("new year")) return "holiday-newyear";
-        return "holiday-default";
-      }
+  if (lower.includes("birthday")) return "birthday";
 
-      if (lower.includes("rsvp")) return "rsvp";
+  if (event && event.isHoliday) {
+    if (lower.includes("christmas")) return "holiday-christmas";
+    if (lower.includes("halloween")) return "holiday-halloween";
+    if (lower.includes("thanksgiving")) return "holiday-thanksgiving";
+    if (lower.includes("valentine")) return "holiday-valentine";
+    if (lower.includes("mother")) return "holiday-mothers";
+    if (lower.includes("father")) return "holiday-fathers";
+    if (lower.includes("memorial")) return "holiday-memorial";
+    if (lower.includes("independence")) return "holiday-independence";
+    if (lower.includes("labor")) return "holiday-labor";
+    if (lower.includes("new year")) return "holiday-newyear";
+    return "holiday-default";
+  }
 
-      let matches = [];
+  if (lower.includes("rsvp")) return "rsvp";
 
-      if (/\bdan\b/.test(lower) || /\bdad\b/.test(lower)) matches.push("dan");
-      if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
+  if (lower.includes("shift")) return "cece";
 
-      if (
-        lower.includes("cece") ||
-        lower.includes("cecelia") ||
-        /\bcc\b/.test(lower)
-      ) matches.push("cece");
+  if (
+    lower.includes("wow") ||
+    lower.includes("winona outdoor wonders")
+  ) return "wow";
 
-      if (lower.includes("gabby") || lower.includes("gabrielle")) matches.push("gabby");
-      if (lower.includes("vincent")) matches.push("vincent");
-      if (lower.includes("gramee") || lower.includes("papa")) matches.push("grandparents");
-      if (lower.includes("wow")) return "wow";
+  let matches = [];
 
-      matches = [...new Set(matches)];
+  if (/\bdan\b/.test(lower) || /\bdad\b/.test(lower)) matches.push("dan");
+  if (lower.includes("colleen") || lower.includes("mom")) matches.push("colleen");
 
-      if (matches.length > 1) {
-        const onlyGrandparents = matches.every(m => m === "grandparents");
-        if (!onlyGrandparents) return "shared";
-      }
+  if (
+    lower.includes("cece") ||
+    lower.includes("cecelia") ||
+    /\bcc\b/.test(lower)
+  ) matches.push("cece");
 
-      return matches[0] || "";
-    }
+  if (lower.includes("gabby") || lower.includes("gabrielle")) matches.push("gabby");
+  if (lower.includes("vincent")) matches.push("vincent");
+  if (lower.includes("gramee") || lower.includes("papa")) matches.push("grandparents");
+
+  matches = [...new Set(matches)];
+
+  if (matches.length > 1) {
+    const onlyGrandparents = matches.every(m => m === "grandparents");
+    if (!onlyGrandparents) return "shared";
+  }
+
+  return matches[0] || "";
+}
 
     function eventIcon(title, event) {
       const lower = (title || "").toLowerCase();
