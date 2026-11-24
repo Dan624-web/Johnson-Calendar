@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<!-- saved from url=(0072)file:///C:/Users/danan/Documents/Codex/2026-11-24/this/outputs/demo.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  <title>Family Calendar — Portfolio Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <style>
+    :root {
+      --bg: #0f172a;
+      --panel: #1e293b;
+      --panel-dark: #0f172a;
+      --border: #334155;
+      --text-muted: #cbd5e1;
+      --alex: #f97316;
+      --jordan: #6b21a8;
+      --riley: #0ea5e9;
+      --avery: #db2777;
+      --sam: #2f4fff;
+      --grandparents: #22d3ee;
+      --shared: #f59e0b;
+      --wow: #84cc16;
+      --rsvp: #facc15;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--bg);
+      color: white;
+      margin: 0;
+      padding: 8px;
+      overflow: hidden;
+    }
+
+    .header {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 10px;
+      height: 52px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 34px;
+      text-align: center;
+    }
+
+    .top-right {
+      position: absolute;
+      right: 0;
+      text-align: right;
+    }
+
+    .clock {
+      font-size: 21px;
+      font-weight: bold;
+    }
+
+    .updated {
+      color: #94a3b8;
+      font-size: 13px;
+      margin-top: 3px;
+    }
+
+    .main-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 12px;
+      height: calc(100vh - 112px);
+    }
+
+    .calendar {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      grid-template-rows: 28px repeat(6, minmax(0, 1fr));
+      gap: 5px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .day-name {
+      text-align: center;
+      color: var(--text-muted);
+      font-weight: bold;
+      font-size: 17px;
+      padding-top: 5px;
+    }
+
+    .day {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 4px;
+      overflow: hidden;
+      min-height: 0;
+      position: relative;
+    }
+
+    .other-month { opacity: 0.35; }
+    .past { opacity: 0.45; }
+
+    .today {
+      outline: 4px solid #38bdf8;
+      background: #1e3a8a;
+    }
+
+    .date-row {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 3px;
+      min-height: 18px;
+    }
+
+    .date {
+      font-weight: bold;
+      font-size: 16px;
+      flex-shrink: 0;
+    }
+
+ .holiday-badge {
+  font-size: 13px;
+  font-weight: bold;
+  color: #facc15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.holiday-badge {
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: rgba(250, 204, 21, 0.12);
+}
+    .birthday-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      color: #fff8dc;
+      font-weight: bold;
+      font-size: 15px;
+      padding: 2px 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #f59e0b, #ec4899);
+      border: 1px solid rgba(255,255,255,0.5);
+      box-shadow: 0 0 10px rgba(255,255,255,0.25), 0 0 18px rgba(236,72,153,0.35);
+      animation: birthdayGlow 2.5s infinite;
+    }
+
+    .birthday-day {
+      border: 2px solid #f59e0b !important;
+      box-shadow: 0 0 14px rgba(245,158,11,0.35);
+    }
+
+    .birthday-day::after {
+      content: "✨";
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      font-size: 16px;
+      animation: confettiFloat 3s infinite ease-in-out;
+      pointer-events: none;
+    }
+
+    @keyframes birthdayGlow {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.03); text-shadow: 0 0 8px white; }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes confettiFloat {
+      0% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+      50% { transform: translateY(-5px) rotate(12deg); opacity: 1; }
+      100% { transform: translateY(0px) rotate(0deg); opacity: 0.7; }
+    }
+
+  .event,
+.agenda-event {
+  color: white;
+  background: rgba(255,255,255,.08);
+}
+
+    .event span,
+    .agenda-event span {
+      display: inline-block;
+      white-space: nowrap;
+    }
+
+  .scroll-title span {
+  animation: scrollText 60s linear infinite;
+  padding-left: 20%;
+}
+
+    @keyframes scrollText {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
+    }
+
+    .alex { background: var(--alex); color: black; }
+    .jordan { background: var(--jordan); color: black; }
+    .riley { background: var(--riley); color: black; }
+    .avery { background: var(--avery); color: black; }
+    .sam { background: var(--sam); color: black; }
+    .grandparents { background: var(--grandparents); color: black; }
+    .shared { background: var(--shared); color: black; }
+.wow {
+  background: #84cc16;
+  color: black;
+}
+    .rsvp {
+      background: var(--rsvp) !important;
+      color: black !important;
+      border: 2px solid white;
+    }
+
+    .holiday-christmas {
+      background: linear-gradient(45deg, #16a34a, #dc2626);
+      color: #fff8dc;
+    }
+
+    .holiday-halloween {
+      background: #f97316;
+      color: black;
+    }
+
+    .holiday-thanksgiving {
+      background: #92400e;
+      color: #facc15;
+    }
+
+    .holiday-valentine,
+    .holiday-mothers,
+    .holiday-fathers {
+      background: #fb7185;
+      color: black;
+    }
+
+    .holiday-memorial,
+    .holiday-independence,
+    .holiday-labor {
+      background: linear-gradient(45deg, #ef4444, #f8fafc, #2563eb);
+      color: black;
+    }
+
+    .holiday-newyear {
+      background: linear-gradient(45deg, #0ea5e9, #a855f7);
+      color: #fff8dc;
+    }
+
+    .holiday-default {
+      background: #334155;
+      color: #facc15;
+      border: 1px solid #facc15;
+    }
+
+    [class*="holiday-"] {
+      box-shadow: 0 0 8px rgba(255,255,255,0.35);
+    }
+
+    .all-day-pinned {
+      position: relative;
+      z-index: 2;
+      background: var(--panel);
+      padding-bottom: 3px;
+    }
+
+    .timed-scroll-area {
+      position: relative;
+      overflow: hidden;
+      height: calc(100% - 28px);
+      z-index: 1;
+    }
+
+    .day-inner {
+      display: flex;
+      flex-direction: column;
+      animation: scrollDay 18s linear infinite;
+    }
+
+    @keyframes scrollDay {
+      0% { transform: translateY(0); }
+      100% { transform: translateY(-50%); }
+    }
+
+    .day:hover .day-inner {
+      animation-play-state: paused;
+    }
+
+    .sidebar {
+      display: grid;
+      grid-template-rows: 230px 1fr;
+      gap: 12px;
+      height: 100%;
+      min-height: 0;
+    }
+
+    .weather-box,
+    .agenda-box {
+      background: var(--panel);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .weather-title,
+    .agenda-title {
+      font-size: 22px;
+      font-weight: bold;
+      margin-bottom: 10px;
+    }
+
+    .weather-current {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .weather-icon {
+      font-size: 46px;
+    }
+
+    .weather-temp {
+      font-size: 46px;
+      font-weight: bold;
+    }
+
+    .weather-detail {
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .forecast {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-top: 12px;
+    }
+
+    .forecast-day {
+      background: var(--panel-dark);
+      border-radius: 8px;
+      padding: 7px;
+      text-align: center;
+      font-weight: bold;
+    }
+
+    .forecast-icon {
+      font-size: 23px;
+    }
+
+    .forecast-temp {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .agenda-event {
+      font-size: 14px;
+      padding: 7px;
+      margin-bottom: 7px;
+    }
+
+    .agenda-section {
+      color: var(--text-muted);
+      font-weight: bold;
+      margin: 10px 0 6px;
+    }
+
+    @media (max-width: 800px) {
+      body { overflow: auto; }
+
+      .header {
+        height: auto;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      h1 { font-size: 28px; }
+
+      .top-right {
+        position: static;
+        text-align: center;
+      }
+
+      .main-layout {
+        display: block;
+        height: auto;
+      }
+
+      .calendar {
+        height: auto;
+        grid-template-rows: 24px repeat(6, 120px);
+        gap: 4px;
+      }
+
+      .day-name { font-size: 11px; }
+      .date { font-size: 13px; }
+
+      .event {
+        font-size: 10px;
+        padding: 2px 3px;
+      }
+
+      .sidebar {
+        display: block;
+        margin-top: 10px;
+      }
+
+      .weather-box,
+      .agenda-box {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div style="text-align:center;padding:8px;background:#0c4a6e;border-radius:8px;margin-bottom:8px;color:#e0f2fe;font-size:14px;">
+    <strong>Portfolio Demo</strong> · All names, events, and weather are fictional. No live calendar is connected.
+  </div>
+  <div class="header">
+    <h1 id="monthTitle">November 2026</h1>
+    <div class="top-right">
+      <div id="clock" class="clock">Tue, Nov 24 • 3:11 PM</div>
+      <div class="updated" id="updated">Updated 3:10 PM</div>
+    </div>
+  </div>
+
+  <div class="main-layout">
+    <div class="calendar" id="calendar"><div class="day-name">Sunday</div><div class="day-name">Monday</div><div class="day-name">Tuesday</div><div class="day-name">Wednesday</div><div class="day-name">Thursday</div><div class="day-name">Friday</div><div class="day-name">Saturday</div><div class="day past"><div class="date-row"><div class="date">1</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">2</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">3</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">4</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">5</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">6</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">7</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">8</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">9</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">10</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">11</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">12</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">13</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">14</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div><div class="day past birthday-day"><div class="date-row"><div class="date">15</div><div class="holiday-badge birthday-badge"><span>🎂 Avery 🎂</span></div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">16</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">17</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">18</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">19</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">20</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">21</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">22</div></div><div class="all-day-pinned"><div class="event scroll-title"><span>✈️ Family Weekend Trip</span></div></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day past"><div class="date-row"><div class="date">23</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day today"><div class="date-row"><div class="date">24</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div><div class="event scroll-title"><span>6:30 PM Family Dinner</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">25</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div><div class="event rsvp scroll-title"><span>⚠️ 5:00 PM RSVP - Neighborhood Picnic</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">26</div><div class="holiday-badge">🦃 Thanksgiving</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">27</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">28</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">29</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day"><div class="date-row"><div class="date">30</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">1</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">2</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">3</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">4</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">5</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">6</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event grandparents scroll-title"><span>12:00 PM Lunch with Grandma &amp; Grandpa</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">7</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event avery scroll-title"><span>🎵 5:15 PM Avery Dance Class</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">8</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event sam scroll-title"><span>🏀 4:30 PM Sam Basketball Practice</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">9</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event riley scroll-title"><span>3:30 PM Riley Art Club</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">10</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event alex scroll-title"><span>6:00 PM Alex Book Club</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">11</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event scroll-title"><span>7:00 PM Family Movie Night</span></div></div></div></div><div class="day other-month"><div class="date-row"><div class="date">12</div></div><div class="all-day-pinned"></div><div class="timed-scroll-area"><div class=""><div class="event jordan scroll-title"><span>10:00 AM Jordan Community Garden</span></div></div></div></div></div>
+
+    <div class="sidebar">
+      <div class="weather-box">
+        <div class="weather-title">Sample Weather</div>
+        <div class="weather-current">
+          <div id="weatherIcon" class="weather-icon">☀️</div>
+          <div>
+            <div id="weatherTemp" class="weather-temp">68°</div>
+            <div id="weatherDesc" class="weather-detail">Sunny · Sample forecast</div>
+          </div>
+        </div>
+        <div id="forecast" class="forecast"><div class="forecast-day"><div>Tue</div><div class="forecast-icon">☀️</div><div class="forecast-temp">68° / 52°</div></div><div class="forecast-day"><div>Wed</div><div class="forecast-icon">🌤️</div><div class="forecast-temp">65° / 50°</div></div><div class="forecast-day"><div>Thu</div><div class="forecast-icon">☁️</div><div class="forecast-temp">62° / 48°</div></div></div>
+      </div>
+
+      <div class="agenda-box">
+        <div class="agenda-title">Today &amp; Tomorrow</div>
+        <div id="agenda"><div class="agenda-section">Today</div><div class="agenda-event sam"><span>🏀 4:30 PM Sam Basketball Practice</span></div><div class="agenda-event "><span>6:30 PM Family Dinner</span></div><div class="agenda-section">Tomorrow</div><div class="agenda-event riley"><span>3:30 PM Riley Art Club</span></div><div class="agenda-event rsvp"><span>⚠️ 5:00 PM RSVP - Neighborhood Picnic</span></div></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+   function getClass(title, event) {
+  const lower = (title || "").toLowerCase();
+
+  if (lower.includes("birthday")) return "birthday";
+
+  if (event && event.isHoliday) {
+    if (lower.includes("christmas")) return "holiday-christmas";
+    if (lower.includes("halloween")) return "holiday-halloween";
+    if (lower.includes("thanksgiving")) return "holiday-thanksgiving";
+    if (lower.includes("valentine")) return "holiday-valentine";
+    if (lower.includes("mother")) return "holiday-mothers";
+    if (lower.includes("father")) return "holiday-fathers";
+    if (lower.includes("memorial")) return "holiday-memorial";
+    if (lower.includes("independence")) return "holiday-independence";
+    if (lower.includes("labor")) return "holiday-labor";
+    if (lower.includes("new year")) return "holiday-newyear";
+    return "holiday-default";
+  }
+
+  if (lower.includes("rsvp")) return "rsvp";
+
+  if (lower.includes("shift")) return "riley";
+
+  if (
+    lower.includes("wow") ||
+    lower.includes("winona outdoor wonders")
+  ) return "wow";
+
+  let matches = [];
+
+  if (/\balex\b/.test(lower) || /\bdad\b/.test(lower)) matches.push("alex");
+  if (lower.includes("jordan") || lower.includes("mom")) matches.push("jordan");
+
+  if (
+    lower.includes("riley") ||
+    lower.includes("riley") ||
+    /\briley\b/.test(lower)
+  ) matches.push("riley");
+
+  if (lower.includes("avery") || lower.includes("avery")) matches.push("avery");
+  if (lower.includes("sam")) matches.push("sam");
+  if (lower.includes("grandma") || lower.includes("grandpa")) matches.push("grandparents");
+
+  matches = [...new Set(matches)];
+
+  if (matches.length > 1) {
+    const onlyGrandparents = matches.every(m => m === "grandparents");
+    if (!onlyGrandparents) return "shared";
+  }
+
+  return matches[0] || "";
+}
+
+    function eventIcon(title, event) {
+      const lower = (title || "").toLowerCase();
+
+      if (lower.includes("birthday")) return "🎂 ";
+
+      if (event && event.isHoliday) {
+        if (lower.includes("christmas")) return "🎄 ";
+        if (lower.includes("halloween")) return "🎃 ";
+        if (lower.includes("thanksgiving")) return "🦃 ";
+        if (lower.includes("valentine")) return "💘 ";
+        if (lower.includes("mother")) return "🌷 ";
+        if (lower.includes("father")) return "👔 ";
+        if (lower.includes("memorial")) return "🇺🇸 ";
+        if (lower.includes("independence")) return "🎆 ";
+        if (lower.includes("labor")) return "🛠️ ";
+        if (lower.includes("new year")) return "🎆 ";
+        return "✨ ";
+      }
+
+      if (lower.includes("soccer")) return "⚽ ";
+      if (lower.includes("basketball")) return "🏀 ";
+      if (lower.includes("baseball") || lower.includes("softball")) return "🥎 ";
+      if (lower.includes("dance") || lower.includes("jazz") || lower.includes("kick")) return "🎵 ";
+      if (lower.includes("doctor") || lower.includes("appointment") || lower.includes("clinic")) return "🩺 ";
+      if (lower.includes("trip") || lower.includes("travel") || lower.includes("chicago")) return "✈️ ";
+      if (lower.includes("scout")) return "🏕️ ";
+      if (lower.includes("rsvp")) return "⚠️ ";
+
+      return "";
+    }
+
+    function nthWeekdayOfMonth(year, month, weekday, n) {
+      const d = new Date(year, month, 1);
+      let count = 0;
+
+      while (d.getMonth() === month) {
+        if (d.getDay() === weekday) {
+          count++;
+          if (count === n) return new Date(d);
+        }
+        d.setDate(d.getDate() + 1);
+      }
+    }
+
+    function lastWeekdayOfMonth(year, month, weekday) {
+      const d = new Date(year, month + 1, 0);
+
+      while (d.getDay() !== weekday) {
+        d.setDate(d.getDate() - 1);
+      }
+
+      return d;
+    }
+
+    function makeHoliday(title, date) {
+      const start = new Date(date);
+      start.setHours(0,0,0,0);
+
+      const end = new Date(start);
+      end.setDate(end.getDate() + 1);
+
+      return {
+        title: title,
+        start: start.toISOString(),
+        end: end.toISOString(),
+        allDay: true,
+        isHoliday: true,
+        calendarId: "built-in-holidays"
+      };
+    }
+
+function getBuiltInHolidays(year) {
+  return [
+    makeHoliday("New Year's Day", new Date(year, 0, 1)),
+
+    makeHoliday("Valentine's Day", new Date(year, 1, 14)),
+
+    makeHoliday(
+      "Mother's Day",
+      nthWeekdayOfMonth(year, 4, 0, 2)
+    ),
+
+    makeHoliday(
+      "Memorial Day",
+      lastWeekdayOfMonth(year, 4, 1)
+    ),
+
+    makeHoliday(
+      "Father's Day",
+      nthWeekdayOfMonth(year, 5, 0, 3)
+    ),
+
+    makeHoliday(
+      "Independence Day",
+      new Date(year, 6, 4)
+    ),
+
+    makeHoliday(
+      "Labor Day",
+      nthWeekdayOfMonth(year, 8, 1, 1)
+    ),
+
+    makeHoliday(
+      "Halloween",
+      new Date(year, 9, 31)
+    ),
+
+    makeHoliday(
+      "Thanksgiving",
+      nthWeekdayOfMonth(year, 10, 4, 4)
+    ),
+
+    makeHoliday(
+      "Christmas",
+      new Date(year, 11, 25)
+    )
+  ];
+}
+
+    function sameDay(a, b) {
+      return a.getFullYear() === b.getFullYear() &&
+             a.getMonth() === b.getMonth() &&
+             a.getDate() === b.getDate();
+    }
+
+    function eventOccursOnDay(event, day) {
+      const dayStart = new Date(day);
+      dayStart.setHours(0,0,0,0);
+
+      const dayEnd = new Date(day);
+      dayEnd.setHours(23,59,59,999);
+
+      const eventStart = new Date(event.start);
+      const eventEnd = new Date(event.end);
+
+      if (event.allDay) {
+        eventEnd.setMilliseconds(eventEnd.getMilliseconds() - 1);
+      }
+
+      return eventStart <= dayEnd && eventEnd >= dayStart;
+    }
+
+    function formatTime(dateString, allDay) {
+      if (allDay) return "";
+      return new Date(dateString).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit"
+      });
+    }
+
+    function createEventDiv(event, className) {
+      const div = document.createElement("div");
+      div.className = className + " " + getClass(event.title, event);
+
+let displayTitle = event.title || "";
+
+if (displayTitle.trim().toLowerCase() === "shift") {
+  displayTitle = "Riley Shift";
+}
+
+const time = formatTime(event.start, event.allDay);
+const text = eventIcon(displayTitle, event) + (time ? time + " " + displayTitle : displayTitle);
+
+      div.innerHTML = "<span>" + text + "</span>";
+
+      setTimeout(() => {
+        const span = div.querySelector("span");
+
+        if (span && span.scrollWidth > div.clientWidth) {
+          div.classList.add("scroll-title");
+        }
+      }, 0);
+
+      return div;
+    }
+
+    function buildCalendar(events) {
+      const calendar = document.getElementById("calendar");
+      calendar.innerHTML = "";
+
+      const today = new Date();
+      const year = today.getFullYear();
+      const month = today.getMonth();
+
+      document.getElementById("monthTitle").innerText =
+        today.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+      const dayNames = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
+      dayNames.forEach(name => {
+        const div = document.createElement("div");
+        div.className = "day-name";
+        div.innerText = name;
+        calendar.appendChild(div);
+      });
+
+      const firstOfMonth = new Date(year, month, 1);
+      const startDate = new Date(firstOfMonth);
+      startDate.setDate(firstOfMonth.getDate() - firstOfMonth.getDay());
+
+      for (let i = 0; i < 42; i++) {
+        const current = new Date(startDate);
+        current.setDate(startDate.getDate() + i);
+
+        const dayDiv = document.createElement("div");
+        dayDiv.className = "day";
+
+        if (current.getMonth() !== month) dayDiv.classList.add("other-month");
+
+        const todayStart = new Date();
+        todayStart.setHours(0,0,0,0);
+
+        if (current < todayStart) dayDiv.classList.add("past");
+        if (sameDay(current, today)) dayDiv.classList.add("today");
+
+        const todaysEvents = events
+          .filter(e => eventOccursOnDay(e, current))
+          .sort((a,b)=> new Date(a.start)-new Date(b.start));
+
+        const holidayEvent = todaysEvents.find(e => e.isHoliday);
+        const birthdayEvent = todaysEvents.find(e =>
+          (e.title || "").toLowerCase().includes("birthday")
+        );
+
+        if (birthdayEvent) {
+          dayDiv.classList.add("birthday-day");
+        }
+
+        const dateRow = document.createElement("div");
+        dateRow.className = "date-row";
+
+        const dateDiv = document.createElement("div");
+        dateDiv.className = "date";
+        dateDiv.innerText = current.getDate();
+        dateRow.appendChild(dateDiv);
+
+        if (holidayEvent) {
+          const holiday = document.createElement("div");
+          holiday.className = "holiday-badge";
+          holiday.innerText = eventIcon(holidayEvent.title, holidayEvent) + holidayEvent.title;
+          dateRow.appendChild(holiday);
+        }
+
+        if (birthdayEvent) {
+  const birthday = document.createElement("div");
+  birthday.className = "holiday-badge birthday-badge";
+
+  const birthdayText =
+    "🎂 " +
+    birthdayEvent.title.replace(/birthday/ig, "").trim() +
+    " 🎂";
+
+  birthday.innerHTML = "<span>" + birthdayText + "</span>";
+
+  dateRow.appendChild(birthday);
+
+  setTimeout(() => {
+    const span = birthday.querySelector("span");
+
+    if (span && span.scrollWidth > birthday.clientWidth) {
+      birthday.classList.add("scroll-title");
+    }
+  }, 0);
+}
+
+        dayDiv.appendChild(dateRow);
+
+        const visibleEvents = todaysEvents.filter(e =>
+          !e.isHoliday &&
+          !(e.title || "").toLowerCase().includes("birthday")
+        );
+
+        const allDayEvents = visibleEvents.filter(e => e.allDay);
+        const timedEvents = visibleEvents.filter(e => !e.allDay);
+
+        const pinned = document.createElement("div");
+        pinned.className = "all-day-pinned";
+
+        allDayEvents.forEach(event => {
+          pinned.appendChild(createEventDiv(event, "event"));
+        });
+
+        dayDiv.appendChild(pinned);
+
+        const scrollArea = document.createElement("div");
+        scrollArea.className = "timed-scroll-area";
+
+        const inner = document.createElement("div");
+        const shouldScroll = timedEvents.length > 3;
+        inner.className = shouldScroll ? "day-inner" : "";
+
+        const eventElements = [];
+
+        timedEvents.forEach(event => {
+          eventElements.push(createEventDiv(event, "event"));
+        });
+
+        eventElements.forEach(el => inner.appendChild(el));
+
+        if (shouldScroll) {
+          eventElements.forEach(el => inner.appendChild(el.cloneNode(true)));
+        }
+
+        scrollArea.appendChild(inner);
+        dayDiv.appendChild(scrollArea);
+        calendar.appendChild(dayDiv);
+      }
+
+      document.getElementById("updated").innerText =
+        "Updated " + new Date().toLocaleTimeString("en-US", { hour:"numeric", minute:"2-digit" });
+    }
+
+    function buildAgenda(events) {
+      const agenda = document.getElementById("agenda");
+      agenda.innerHTML = "";
+
+      const today = new Date();
+      today.setHours(0,0,0,0);
+
+      const tomorrow = new Date(today);
+      tomorrow.setDate(today.getDate() + 1);
+
+      const dayAfterTomorrow = new Date(today);
+      dayAfterTomorrow.setDate(today.getDate() + 2);
+
+      const agendaEvents = events
+        .filter(e => {
+          const d = new Date(e.start);
+          return d >= today && d < dayAfterTomorrow && !e.isHoliday;
+        })
+        .sort((a,b)=> new Date(a.start)-new Date(b.start));
+
+      if (!agendaEvents.length) {
+        agenda.innerHTML = "<div style='color:#cbd5e1;'>No events today or tomorrow</div>";
+        return;
+      }
+
+      let currentLabel = "";
+
+      agendaEvents.forEach(event => {
+        const eventDate = new Date(event.start);
+        const label = eventDate < tomorrow ? "Today" : "Tomorrow";
+
+        if (label !== currentLabel) {
+          const header = document.createElement("div");
+          header.className = "agenda-section";
+          header.innerText = label;
+          agenda.appendChild(header);
+          currentLabel = label;
+        }
+
+        agenda.appendChild(createEventDiv(event, "agenda-event"));
+      });
+    }
+
+    function highlightNextEvent() {
+      const items = document.querySelectorAll("#agenda .agenda-event");
+      if (!items.length) return;
+
+      const now = new Date();
+
+      for (let item of items) {
+        const match = item.innerText.match(/(\d+:\d+|\d+\s?(AM|PM))/i);
+        if (!match) continue;
+
+        const parsed = Date.parse("1970/01/01 " + match[0]);
+        if (isNaN(parsed)) continue;
+
+        const eventTime = new Date();
+        eventTime.setHours(new Date(parsed).getHours());
+        eventTime.setMinutes(new Date(parsed).getMinutes());
+
+        if (eventTime >= now) {
+          item.style.border = "3px solid #38bdf8";
+          item.style.background = "#0ea5e9";
+          item.style.color = "white";
+          break;
+        }
+      }
+    }
+
+    function weatherEmoji(desc) {
+      desc = desc.toLowerCase();
+      if (desc.includes("snow")) return "❄️";
+      if (desc.includes("rain") || desc.includes("shower")) return "🌧️";
+      if (desc.includes("storm") || desc.includes("thunder")) return "⛈️";
+      if (desc.includes("cloud")) return "☁️";
+      if (desc.includes("sun") || desc.includes("clear")) return "☀️";
+      if (desc.includes("fog") || desc.includes("mist")) return "🌫️";
+      return "🌤️";
+    }
+
+    function loadWeather() {
+      document.getElementById("weatherIcon").textContent = "☀️";
+      document.getElementById("weatherTemp").textContent = "68°";
+      document.getElementById("weatherDesc").textContent = "Sunny · Sample forecast";
+      const forecast = document.getElementById("forecast");
+      forecast.innerHTML = "";
+      [ ["☀️", "68° / 52°"], ["🌤️", "65° / 50°"], ["☁️", "62° / 48°"] ].forEach(([icon, temp], offset) => {
+        const date = new Date();
+        date.setDate(date.getDate() + offset);
+        const div = document.createElement("div");
+        div.className = "forecast-day";
+        div.innerHTML = '<div>' + date.toLocaleDateString("en-US", {weekday:"short"}) + '</div><div class="forecast-icon">' + icon + '</div><div class="forecast-temp">' + temp + '</div>';
+        forecast.appendChild(div);
+      });
+    }
+
+    function updateClock() {
+      const now = new Date();
+
+      document.getElementById("clock").innerText =
+        now.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric"
+        }) +
+        " • " +
+        now.toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit"
+        });
+    }
+
+function loadCalendar() {
+  const today = new Date();
+  const first = new Date(today.getFullYear(), today.getMonth(), 1);
+  first.setDate(first.getDate() - first.getDay());
+  const events = [];
+  function sampleEvent(title, day, hour, minute = 0, allDay = false) {
+    const start = new Date(day);
+    start.setHours(hour, minute, 0, 0);
+    const end = new Date(start);
+    if (allDay) end.setDate(end.getDate() + 1);
+    else end.setHours(end.getHours() + 1);
+    events.push({title, start:start.toISOString(), end:end.toISOString(), allDay});
+  }
+  for (let offset = 0; offset < 42; offset++) {
+    const day = new Date(first);
+    day.setDate(first.getDate() + offset);
+    if (day.getDay() === 1) sampleEvent("Avery Dance Class", day, 17, 15);
+    if (day.getDay() === 2) sampleEvent("Sam Basketball Practice", day, 16, 30);
+    if (day.getDay() === 3) sampleEvent("Riley Art Club", day, 15, 30);
+    if (day.getDay() === 4) sampleEvent("Alex Book Club", day, 18);
+    if (day.getDay() === 5) sampleEvent("Family Movie Night", day, 19);
+    if (day.getDay() === 6) sampleEvent("Jordan Community Garden", day, 10);
+    if (day.getDay() === 0) sampleEvent("Lunch with Grandma & Grandpa", day, 12);
+  }
+  sampleEvent("Family Dinner", today, 18, 30);
+  const tomorrow = new Date(today);
+  tomorrow.setDate(today.getDate() + 1);
+  sampleEvent("RSVP - Neighborhood Picnic", tomorrow, 17);
+  const birthday = new Date(today.getFullYear(), today.getMonth(), 15);
+  sampleEvent("Avery Birthday", birthday, 0, 0, true);
+  const trip = new Date(today.getFullYear(), today.getMonth(), 22);
+  sampleEvent("Family Weekend Trip", trip, 0, 0, true);
+  const holidays = [today.getFullYear() - 1, today.getFullYear(), today.getFullYear() + 1].flatMap(getBuiltInHolidays);
+  const combined = events.concat(holidays);
+  buildCalendar(combined);
+  buildAgenda(combined);
+  highlightNextEvent();
+}
+
+    updateClock();
+    loadWeather();
+    loadCalendar();
+
+    setInterval(updateClock, 60000);
+  setInterval(() => {
+  loadCalendar();
+  loadWeather();
+}, 300000);
+  </script>
+
+
+</body></html>
